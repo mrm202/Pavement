@@ -1,0 +1,252 @@
+<!doctype html>
+<html>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js"> </script>
+<script src="https://requirejs.org/docs/release/2.3.5/minified/require.js"> </script>
+
+<head>
+  <script>
+    async function loadModel_D1() {
+      model_D1 = undefined;
+      model_D1 = await tf.loadLayersModel("https://raw.githubusercontent.com/mrm202/Pavement/master/Models/D1/model.json");
+      model_D1.summary()
+    }
+    loadModel_D1();
+
+    async function loadModel_D2() {
+      model_D2 = undefined;
+      model_D2 = await tf.loadLayersModel("https://raw.githubusercontent.com/mrm202/Pavement/master/Models/D2/model.json");
+      model_D2.summary()
+    }
+    loadModel_D2();
+
+    async function loadModel_D3() {
+      model_D3 = undefined;
+      model_D3 = await tf.loadLayersModel("https://raw.githubusercontent.com/mrm202/Pavement/master/Models/D3/model.json");
+      model_D3.summary()
+    }
+    loadModel_D3();
+
+    async function loadModel_D4() {
+      model_D4 = undefined;
+      model_D4 = await tf.loadLayersModel("https://raw.githubusercontent.com/mrm202/Pavement/master/Models/D4/model.json");
+      model_D4.summary()
+    }
+    loadModel_D4();
+
+    async function loadModel_D5() {
+      model_D5 = undefined;
+      model_D5 = await tf.loadLayersModel("https://raw.githubusercontent.com/mrm202/Pavement/master/Models/D5/model.json");
+      model_D5.summary()
+    }
+    loadModel_D5();
+
+    async function loadModel_D6() {
+      model_D6 = undefined;
+      model_D6 = await tf.loadLayersModel("https://raw.githubusercontent.com/mrm202/Pavement/master/Models/D6/model.json");
+      model_D6.summary()
+    }
+    loadModel_D6();
+
+    async function loadModel_E1() {
+      model_E1 = undefined;
+      model_E1 = await tf.loadLayersModel("https://raw.githubusercontent.com/mrm202/Pavement/master/Models/E1/model.json");
+      model_E1.summary()
+    }
+    loadModel_E1();
+
+    async function loadModel_E2() {
+      model_E2 = undefined;
+      model_E2 = await tf.loadLayersModel("https://raw.githubusercontent.com/mrm202/Pavement/master/Models/E2/model.json");
+      model_E2.summary()
+    }
+    loadModel_E2();
+
+    async function loadModel_E3() {
+      model_E3 = undefined;
+      model_E3 = await tf.loadLayersModel("https://raw.githubusercontent.com/mrm202/Pavement/master/Models/E3/model.json");
+      model_E3.summary()
+    }
+    loadModel_E3();
+
+
+
+    function sDeflections() {
+      var H1, H2, lnD1, lnD2, lnD3, lnD4, lnD5, lnD6, E1, E2, E3, SN;
+      H1 = Number(document.getElementById("H1").value);
+      H2 = Number(document.getElementById("H2").value);
+      let D1 = Number(document.getElementById("D1").value);
+      lnD1 = Math.log(D1)
+      let D2 = Number(document.getElementById("D2").value);
+      lnD2 = Math.log(D2)
+      let D3 = Number(document.getElementById("D3").value);
+      lnD3 = Math.log(D3)
+      let D4 = Number(document.getElementById("D4").value);
+      lnD4 = Math.log(D4)
+      let D5 = Number(document.getElementById("D5").value);
+      lnD5 = Math.log(D5)
+      let D6 = Number(document.getElementById("D6").value);
+      lnD6 = Math.log(D6)
+      E1 = Number(document.getElementById("E1").value);
+      E2 = Number(document.getElementById("E2").value);
+      E3 = Number(document.getElementById("E3").value);
+      let lx1 = E1 * 145.038
+      let lx2 = Math.pow(lx1, 0.5887846);
+      let a1 = 0.0002128 * lx2
+      let a1H1 = a1 * H1
+
+      let ly1 = E2 * 145.038
+      let ly2 = Math.log10(ly1)
+      let ly3 = 0.249 * ly2
+      let a2 =  ly3 - 0.977
+      let a2H2 = a2 * H2
+      let SNx = a1H1 + a2H2
+      SN = 0.0393701 * SNx
+      console.log(H1, H2, lnD1, lnD2, lnD3, lnD4, lnD5, lnD6, E1, E2, E3, SN)
+
+      input_sd = tf.tensor([[H1, H2, E1, E2, E3, SN]]);
+      console.log(input_sd)
+      let lnd1 = model_D1.predict(input_sd);
+      console.log(lnd1)
+      d1 = Math.exp(lnd1)
+      console.log(d1)
+      let lnd2 = model_D2.predict(input_sd);
+      d2 = Math.exp(lnd2)
+      console.log(d2)
+      let lnd3 = model_D3.predict(input_sd);
+      d3 = Math.exp(lnd3)
+      console.log(d3)
+      let lnd4 = model_D4.predict(input_sd);
+      d4 = Math.exp(lnd4)
+      console.log(d4)
+      let lnd5 = model_D5.predict(input_sd);
+      d5 = Math.exp(lnd5)
+      console.log(d5)
+      let lnd6 = model_D6.predict(input_sd);
+      d6 = Math.exp(lnd6)
+      console.log(d6)
+
+      const outputDatad1 = d1dataSync();
+      const outputDatad2 = d2.dataSync();
+      const outputDatad3 = d3.dataSync();
+      const outputDatad4 = d4.dataSync();
+      const outputDatad5 = d5.dataSync();
+      const outputDatad6 = d6.dataSync();
+      output_sd = tf.tensor2d([
+        [d1, d2, d3, d4, d5, d6]
+    ])
+    document.getElementById("d1").value = Number(outputDatad1[0]);
+    document.getElementById("d2").value = Number(outputDatad2[0]);
+    document.getElementById("d3").value = Number(outputDatad3[0]);
+    document.getElementById("d4").value = Number(outputDatad4[0]);
+    document.getElementById("d5").value = Number(outputDatad5[0]);
+    document.getElementById("d6").value = Number(outputDatad6[0]);
+    }
+    function lModuli() {
+      var H1, H2, lnD1, lnD2, lnD3, lnD4, lnD5, lnD6, E1, E2, E3, SN;
+      H1 = Number(document.getElementById("H1").value);
+      H2 = Number(document.getElementById("H2").value);
+      let D1 = Number(document.getElementById("D1").value);
+      lnD1 = Math.log(D1)
+      let D2 = Number(document.getElementById("D2").value);
+      lnD2 = Math.log(D2)
+      let D3 = Number(document.getElementById("D3").value);
+      lnD3 = Math.log(D3)
+      let D4 = Number(document.getElementById("D4").value);
+      lnD4 = Math.log(D4)
+      let D5 = Number(document.getElementById("D5").value);
+      lnD5 = Math.log(D5)
+      let D6 = Number(document.getElementById("D6").value);
+      lnD6 = Math.log(D6)
+      E1 = Number(document.getElementById("E1").value);
+      E2 = Number(document.getElementById("E2").value);
+      E3 = Number(document.getElementById("E3").value);
+      let lx1 = E1 * 145.038
+      let lx2 = Math.pow(lx1, 0.5887846);
+      let a1 = 0.0002128 * lx2
+      let a1H1 = a1 * H1
+
+      let ly1 = E2 * 145.038
+      let ly2 = Math.log10(ly1)
+      let ly3 = 0.249 * ly2
+      let a2 =  ly3 - 0.977
+      let a2H2 = a2 * H2
+      let SNx = a1H1 + a2H2
+      SN = 0.0393701 * SNx
+      console.log(H1, H2, lnD1, lnD2, lnD3, lnD4, lnD5, lnD6, E1, E2, E3, SN)
+
+      input_lm = tf.tensor2d([[H1, H2, lnD1, lnD2, lnD3, lnD4, lnD5, lnD6, SN]]);
+      console.log(input_lm)
+
+      e1 = model_E1.predict(input_lm);
+      e2 = model_E2.predict(input_lm);
+      e3 = model_E3.predict(input_lm);
+      const outputDatae1 = e1.dataSync();
+      const outputDatae2 = e2.dataSync();
+      const outputDatae3 = e3.dataSync();
+      
+      output_lm = tf.tensor2d([
+        [e1, e2, e3]
+    ])
+    document.getElementById("e1").value = Number(outputDatae1[0]);
+    document.getElementById("e2").value = Number(outputDatae2[0]);
+    document.getElementById("e3").value = Number(outputDatae3[0]);
+    }
+
+  </script>
+</head>
+
+<body>
+  <center>
+    <h1>BACK-CALCULATION OF LAYER MODULI</h1>
+    <br>
+  </center>
+  <center>Enter the H1 : <input id="H1"></center>
+  <br>
+  <center>Enter the H2 : <input id="H2"></center>
+  <br>
+  <center>Enter the D1 : <input id="D1"></center>
+  <br>
+  <center>Enter the D2 : <input id="D2"></center>
+  <br>
+  <center>Enter the D3 : <input id="D3"></center>
+  <br>
+  <center>Enter the D4 : <input id="D4"></center>
+  <br>
+  <center>Enter the D5 : <input id="D5"></center>
+  <br>
+  <center>Enter the D6 : <input id="D6"></center>
+  <br>
+  <center>Enter the E1 : <input id="E1"></center>
+  <br>
+  <center>Enter the E2 : <input id="E2"></center>
+  <br>
+  <center>Enter the E3 : <input id="E3"></center>
+  <br>
+  <center><button onclick="sDeflections()">ESTIMATION OF SURFACE DEFLECTIONS</button></center>
+  <br>
+  <center>D1 : <input id="d1"></center>
+  <br>
+  <center>D2 : <input id="d2"></center>
+  <br>
+  <center>D3 : <input id="d3"></center>
+  <br>
+  <center>D4 : <input id="d4"></center>
+  <br>
+  <center>D5 : <input id="d5"></center>
+  <br>
+  <center>D6 : <input id="d6"></center>
+  <br>
+  <center><button onclick="lModuli()">BACK-CALCULATION OF LAYER MODULI</button></center>
+  <br>
+  <center>E1 : <input id="e1"></center>
+  <br>
+  <center>E2 : <input id="e2"></center>
+  <br>
+  <center>E3 : <input id="e3"></center>
+
+  <br> <br>
+</body>
+
+</html>
